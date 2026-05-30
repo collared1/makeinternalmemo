@@ -85,7 +85,7 @@
             headerElements[`H${i}TITLE`] = await document.getElementById(`H${i}TITLE`);
             headerElements[`H${i}TEXT`] = await document.getElementById(`H${i}TEXT`);
           }
-          for (const value of Object.values(documentElements) {
+          for (const value of Object.values(documentElements)) {
             if (value.value == "") {
               window.alert("All non-optional text areas must be filled in to generate a memo.");
               return;
