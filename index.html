@@ -58,16 +58,6 @@
     <script>
       const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
     
-      function buildPayload() {
-        return {
-          CLASSIFICATION: "CONFIDENTIAL",
-          FROMUSER:  "Princip. DD-DSS, Julius Caesar",
-          TOUSER:    "Secretary of State, Mike Johnson",
-          SUBJECT:   "Testing memo creation system.",
-          SUMMARY:   "This memorandum is a test of the new memorandum creation system developed by me.",
-        };
-      }
-    
       async function generate() {
         const status = document.getElementById("status");
         const result = document.getElementById("result");
@@ -92,7 +82,7 @@
             }
           }
           let payload = {
-            "CLASSIFICATION":"CONFIDENTIAL",
+            "CLASSIFICATION":"UNCLASSIFIED",
             "FROMUSER":documentElements.fromuser.value,
             "TOUSER":documentElements.touser.value,
             "SUBJECT":documentElements.subject.value,
