@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Document Generator</title>
+
+<style>
+body {
+    font-family: sans-serif;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+textarea {
+    min-height: 80px;
+}
+
+button {
+    margin-top: 20px;
+}
+
+#result {
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>Document Generator</h1>
+
+<label>
+Classification
+<select id="classification">
+    <option>UNCLASSIFIED</option>
+    <option>CLASSIFIED</option>
+    <option>SECRET</option>
+    <option>TOP SECRET</option>
+</select>
+</label>
+
+<label>
+From User
+<input id="fromUser">
+</label>
+
+<label>
+To User
+<input id="toUser">
+</label>
+
+<label>
+Subject
+<input id="subject">
+</label>
+
+<label>
+Summary
+<textarea id="summary"></textarea>
+</label>
+
+<div id="sections"></div>
+
+<button onclick="generateDocument()">
+Generate Document
+</button>
+
+<div id="result"></div>
+
+<script>
+
+// Change this to your Apps Script Web App URL
+const WEBHOOK_URL =
+    "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
+
+const sectionsDiv =
+    document.getElementById("sections");
+
+for (let i = 1; i <= 10; i++) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.innerHTML = `
+        <h3>Section ${i}</h3>
+
+        <label>
+        H${i}TITLE
+        <input id="H${i}TITLE">
+        </label>
+
+        <label>
+        H${i}TEXT
+        <textarea id="H${i}TEXT"></textarea>
+        </label>
+    `;
+
+    sectionsDiv.appendChild(wrapper);
+}
+
+async function generateDocument() {
+
+    const payload = {
+        CLASSIFICATION:
+            document.getElementById(
+                "classification"
+            ).value,
+
+        FROMUSER:
+            document.getElementById(
+                "fromUser"
+            ).value,
+
+        TOUSER:
+            document.getElementById(
+                "toUser"
+            ).value,
+
+        SUBJECT:
+            document.getElementById(
+                "subject"
+            ).value,
+
+        SUMMARY:
+            document.getElementById(
+                "summary"
+            ).value
+    };
+
+    for (let i = 1; i <= 10; i++) {
+
+        const title =
+            document.getElementById(
+                `H${i}TITLE`
+            ).value.trim();
+
+        const text =
+            document.getElementById(
+                `H${i}TEXT`
+            ).value.trim();
+
+        if (title) {
+            payload[`H${i}TITLE`] = title;
+        }
+
+        if (text) {
+            payload[`H${i}TEXT`] = text;
+        }
+    }
+
+    const resultDiv =
+        document.getElementById("result");
+
+    resultDiv.textContent =
+        "Generating...";
+
+    try {
+
+        const response =
+            await fetch(
+                WEBHOOK_URL,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            resultDiv.innerHTML = `
+                <p>
+                    Success:
+                    <a href="${data.LINK}" target="_blank">
+                        Open Document
+                    </a>
+                </p>
+            `;
+
+        } else {
+
+            resultDiv.textContent =
+                "Error: " +
+                data.error;
+        }
+
+    } catch (err) {
+
+        resultDiv.textContent =
+            "Request failed: " +
+            err.message;
+    }
+}
+
+</script>
+
+</body>
+</html>
