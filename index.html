@@ -82,8 +82,8 @@
           const headerElements = {}
 
           for (let i = 1; i <= 10; i++) {
-            headerElements[`h${i}title`] = await document.getElementById(`H${i}TITLE`);
-            headerElements[`h${i}text`] = await document.getElementById(`H${i}TEXT`);
+            headerElements[`H${i}TITLE`] = await document.getElementById(`H${i}TITLE`);
+            headerElements[`H${i}TEXT`] = await document.getElementById(`H${i}TEXT`);
           }
           for (const value of Object.values(documentElements) {
             if (value.value == "") {
@@ -91,10 +91,17 @@
               return
             }
           }
-          const payload = JSON.stringify({
+          const payload = {
             "CLASSIFICATION":"CONFIDENTIAL",
             "FROMUSER":documentElements.fromuser.value,
-          })
+            "TOUSER":documentElements.touser.value,
+            "SUBJECT":documentElements.subject.value,
+            "SUMMARY":documentElements.summary.value,
+          };
+          for (const [key, value] of Object.entries(headerElements)) {
+            payload[key] = value;
+          }
+          const payload = JSON.stringify(payload);
           status.textContent = "Generating… May take a while.";
           const res  = await fetch(WORKER_URL, {
             method:  "POST",
