@@ -17,56 +17,26 @@
 
 const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev";
 
-async function generateMemo({
-    classification,
-    fromUser,
-    toUser,
-    subject,
-    summary,
-    callbackUrl = null,
-    sections = []
-}) {
+async function generateMemo(payload) {
 
-    const payload = {
-        CLASSIFICATION: classification,
-        FROMUSER: fromUser,
-        TOUSER: toUser,
-        SUBJECT: subject,
-        SUMMARY: summary
-    };
-
-    if (callbackUrl) {
-        payload.CALLBACK_URL = callbackUrl;
-    }
-
-    for (let i = 0; i < sections.length && i < 10; i++) {
-        if (sections[i].title) {
-            payload[`H${i + 1}TITLE`] = sections[i].title;
-        }
-        if (sections[i].text) {
-            payload[`H${i + 1}TEXT`] = sections[i].text;
-        }
-    }
+    console.log("SENDING TO WORKER");
 
     try {
 
-        const formData = new FormData();
-        formData.append("payload", JSON.stringify(payload));
-
-        console.log("SENDING TO WORKER");
-
         await fetch(WORKER_URL, {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
         });
-        
+
         console.log("SENT");
 
-        return {
-            success: true
-        };
+        return { success: true };
 
     } catch (err) {
+
         return {
             success: false,
             error: err.message
@@ -81,27 +51,24 @@ async function main() {
     status.innerText = "Generating memo...";
 
     const result = await generateMemo({
-        classification: "SECRET",
-        fromUser: "Alice",
-        toUser: "Bob",
-        subject: "Security Review",
-        summary: "This is a test memo generated via Worker proxy.",
-        callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
-        sections: [
-            {
-                title: "Background",
-                text: "Background information"
-            },
-            {
-                title: "Analysis",
-                text: "Analysis information"
-            }
-        ]
+        CLASSIFICATION: "SECRET",
+        FROMUSER: "Alice",
+        TOUSER: "Bob",
+        SUBJECT: "Security Review",
+        SUMMARY: "This is a test memo generated through Worker proxy.",
+        CALLBACK_URL: "https://makeinternalmemo.pages.dev/makeinternalmemo",
+        H1TITLE: "Background",
+        H1TEXT: "Background info",
+        H2TITLE: "Analysis",
+        H2TEXT: "Analysis info"
     });
 
     if (result.success) {
+
         status.innerText = "Request sent. Waiting for document link...";
+
     } else {
+
         status.innerText = "Error: " + result.error;
     }
 }
