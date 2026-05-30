@@ -6,29 +6,31 @@
     </head>
     <body>
         <script>
-            const result = await generateMemo({
-                  classification: "SECRET",
-                  fromUser: "Alice",
-                  toUser: "Bob",
-                  subject: "Security Review",
-                  summary: "Summary goes here.",
-                  callbackUrl: "https://github.io/collared1/makeinternalmemo",
-                  sections: [
-                    {
-                      title: "Background",
-                      text: "Background information."
-                    },
-                    {
-                      title: "Analysis",
-                      text: "Analysis information."
-                    }
-                  ]
-                });
-
-            if (result.success) {
-              console.log(result.link);
-            } else {
-              console.error(result.error);
+            async function main() {
+                const result = await generateMemo({
+                      classification: "SECRET",
+                      fromUser: "Alice",
+                      toUser: "Bob",
+                      subject: "Security Review",
+                      summary: "Summary goes here.",
+                      callbackUrl: "https://collared1.github.io/makeinternalmemo",
+                      sections: [
+                        {
+                          title: "Background",
+                          text: "Background information."
+                        },
+                        {
+                          title: "Analysis",
+                          text: "Analysis information."
+                        }
+                      ]
+                    });
+    
+                if (result.success) {
+                  console.log(result.link);
+                } else {
+                  console.error(result.error);
+                }
             }
             async function generateMemo({
               classification,
@@ -104,7 +106,7 @@
             
               }
             }
-            
+            main()
         </script>
     </body>
 </html>
