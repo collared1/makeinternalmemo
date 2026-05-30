@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <title>Memo Generator</title>
     <style>
-      
+      html, body {
+        background-color: #333333;
+      }
     </style>
   </head>
   <body>
@@ -30,7 +32,7 @@
         const status = document.getElementById("status");
         const result = document.getElementById("result");
     
-        status.textContent = "Generating…";
+        status.textContent = "Generating… May take up to a minute.";
         result.style.display = "none";
     
         try {
