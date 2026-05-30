@@ -1,19 +1,22 @@
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document Generator</title>
 
 <style>
 body {
-    font-family: sans-serif;
-    max-width: 800px;
-    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    color: black;
+    margin: 20px;
 }
 
 label {
     display: block;
-    margin-top: 10px;
+    margin-top: 12px;
+    font-weight: bold;
 }
 
 input,
@@ -21,18 +24,31 @@ select,
 textarea {
     width: 100%;
     box-sizing: border-box;
+    padding: 4px;
+    margin-top: 4px;
+    color: black;
 }
 
 textarea {
     min-height: 80px;
+    resize: vertical;
 }
 
 button {
     margin-top: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.section {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
 }
 
 #result {
     margin-top: 20px;
+    font-weight: bold;
 }
 </style>
 </head>
@@ -52,22 +68,27 @@ Classification
 
 <label>
 From User
-<input id="fromUser">
+<input id="fromUser" type="text">
 </label>
 
 <label>
 To User
-<input id="toUser">
+<input id="toUser" type="text">
 </label>
 
 <label>
 Subject
-<input id="subject">
+<input id="subject" type="text">
 </label>
 
 <label>
 Summary
 <textarea id="summary"></textarea>
+</label>
+
+<label>
+Callback URL (optional)
+<input id="callbackUrl" type="text">
 </label>
 
 <div id="sections"></div>
@@ -80,24 +101,26 @@ Generate Document
 
 <script>
 
-// Change this to your Apps Script Web App URL
+// REPLACE WITH YOUR APPS SCRIPT WEB APP URL
 const WEBHOOK_URL =
-    "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
+"https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
 
-const sectionsDiv =
-    document.getElementById("sections");
+const sectionsContainer =
+document.getElementById("sections");
 
 for (let i = 1; i <= 10; i++) {
 
-    const wrapper =
-        document.createElement("div");
+    const section =
+    document.createElement("div");
 
-    wrapper.innerHTML = `
+    section.className = "section";
+
+    section.innerHTML = `
         <h3>Section ${i}</h3>
 
         <label>
         H${i}TITLE
-        <input id="H${i}TITLE">
+        <input id="H${i}TITLE" type="text">
         </label>
 
         <label>
@@ -106,7 +129,7 @@ for (let i = 1; i <= 10; i++) {
         </label>
     `;
 
-    sectionsDiv.appendChild(wrapper);
+    sectionsContainer.appendChild(section);
 }
 
 async function generateDocument() {
@@ -138,6 +161,16 @@ async function generateDocument() {
             ).value
     };
 
+    const callbackUrl =
+        document.getElementById(
+            "callbackUrl"
+        ).value.trim();
+
+    if (callbackUrl) {
+        payload.CALLBACK_URL =
+            callbackUrl;
+    }
+
     for (let i = 1; i <= 10; i++) {
 
         const title =
@@ -151,35 +184,40 @@ async function generateDocument() {
             ).value.trim();
 
         if (title) {
-            payload[`H${i}TITLE`] = title;
+            payload[`H${i}TITLE`] =
+                title;
         }
 
         if (text) {
-            payload[`H${i}TEXT`] = text;
+            payload[`H${i}TEXT`] =
+                text;
         }
     }
 
-    const resultDiv =
-        document.getElementById("result");
+    const result =
+        document.getElementById(
+            "result"
+        );
 
-    resultDiv.textContent =
+    result.textContent =
         "Generating...";
 
     try {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "payload",
+            JSON.stringify(payload)
+        );
 
         const response =
             await fetch(
                 WEBHOOK_URL,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
+                    body: formData
                 }
             );
 
@@ -188,31 +226,30 @@ async function generateDocument() {
 
         if (data.success) {
 
-            resultDiv.innerHTML = `
-                <p>
-                    Success:
-                    <a href="${data.LINK}" target="_blank">
-                        Open Document
-                    </a>
-                </p>
+            result.innerHTML = `
+                Document created:
+                <a href="${data.LINK}"
+                   target="_blank">
+                   Open Document
+                </a>
             `;
 
         } else {
 
-            resultDiv.textContent =
+            result.textContent =
                 "Error: " +
                 data.error;
         }
 
     } catch (err) {
 
-        resultDiv.textContent =
+        result.textContent =
             "Request failed: " +
             err.message;
     }
 }
-
 </script>
 
 </body>
 </html>
+```
