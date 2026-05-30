@@ -9,7 +9,7 @@
 
     <h2>Memo Generator</h2>
 
-    <button onclick="main()">Generate Test Memo</button>
+    <button onclick="main()">Generate Memo</button>
 
     <p id="status"></p>
 
@@ -41,41 +41,28 @@
             }
 
             for (let i = 0; i < sections.length && i < 10; i++) {
-
                 if (sections[i].title) {
                     payload[`H${i + 1}TITLE`] = sections[i].title;
                 }
-
                 if (sections[i].text) {
                     payload[`H${i + 1}TEXT`] = sections[i].text;
                 }
             }
 
+            const formData = new FormData();
+            formData.append("payload", JSON.stringify(payload));
+
             try {
 
-                const formData = new FormData();
-                formData.append(
-                    "payload",
-                    JSON.stringify(payload)
-                );
-
-                const res = await fetch(APPS_SCRIPT_URL, {
+                await fetch(APPS_SCRIPT_URL, {
                     method: "POST",
                     body: formData
                 });
 
-                const data = await res.json();
-
-                if (!data.success) {
-                    return {
-                        success: false,
-                        error: data.error
-                    };
-                }
+                // We DO NOT read response because Apps Script + CORS blocks it
 
                 return {
-                    success: true,
-                    link: data.LINK
+                    success: true
                 };
 
             } catch (err) {
@@ -91,32 +78,31 @@
 
             const status = document.getElementById("status");
 
-            status.innerText = "Generating...";
+            status.innerText = "Generating memo...";
 
             const result = await generateMemo({
                 classification: "SECRET",
                 fromUser: "Alice",
                 toUser: "Bob",
                 subject: "Security Review",
-                summary: "This is a generated memo.",
+                summary: "This is a test memo.",
                 callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
                 sections: [
                     {
                         title: "Background",
-                        text: "Background information here."
+                        text: "Background info"
                     },
                     {
                         title: "Analysis",
-                        text: "Analysis information here."
+                        text: "Analysis info"
                     }
                 ]
             });
 
             if (result.success) {
 
-                status.innerHTML =
-                    "Done: " +
-                    `<a href="${result.link}" target="_blank">Open Document</a>`;
+                status.innerText =
+                    "Request sent. Waiting for document link...";
 
             } else {
 
