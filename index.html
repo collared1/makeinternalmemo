@@ -1,87 +1,131 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            
-        </style>
-    </head>
-    <body>
-        v1.0.0
-        <script>
-            async function generateMemo({
-                classification,
-                fromUser,
-                toUser,
-                subject,
-                summary,
-                callbackUrl = null,
-                sections = []
-            }) {
-            
-                const payload = {
-                    CLASSIFICATION: classification,
-                    FROMUSER: fromUser,
-                    TOUSER: toUser,
-                    SUBJECT: subject,
-                    SUMMARY: summary
-                };
-            
-                if (callbackUrl) {
-                    payload.CALLBACK_URL = callbackUrl;
+<head>
+    <meta charset="UTF-8">
+    <title>Memo Generator</title>
+</head>
+
+<body>
+
+    <h2>Memo Generator</h2>
+
+    <button onclick="main()">Generate Test Memo</button>
+
+    <p id="status"></p>
+
+    <script>
+
+        const APPS_SCRIPT_URL =
+            "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
+
+        async function generateMemo({
+            classification,
+            fromUser,
+            toUser,
+            subject,
+            summary,
+            callbackUrl = null,
+            sections = []
+        }) {
+
+            const payload = {
+                CLASSIFICATION: classification,
+                FROMUSER: fromUser,
+                TOUSER: toUser,
+                SUBJECT: subject,
+                SUMMARY: summary
+            };
+
+            if (callbackUrl) {
+                payload.CALLBACK_URL = callbackUrl;
+            }
+
+            for (let i = 0; i < sections.length && i < 10; i++) {
+
+                if (sections[i].title) {
+                    payload[`H${i + 1}TITLE`] = sections[i].title;
                 }
-            
-                for (let i = 0; i < sections.length && i < 10; i++) {
-                    if (sections[i].title) payload[`H${i + 1}TITLE`] = sections[i].title;
-                    if (sections[i].text) payload[`H${i + 1}TEXT`] = sections[i].text;
-                }
-            
-                try {
-            
-                    const formData = new FormData();
-                    formData.append("payload", JSON.stringify(payload));
-            
-                    const res = await fetch(
-                        "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    );
-            
-                    const data = await res.json();
-            
-                    if (!data.success) {
-                        return { success: false, error: data.error };
-                    }
-            
-                    return { success: true, link: data.LINK };
-            
-                } catch (err) {
-                    return { success: false, error: err.message };
+
+                if (sections[i].text) {
+                    payload[`H${i + 1}TEXT`] = sections[i].text;
                 }
             }
-            async function main() {
-            
-                const result = await generateMemo({
-                    classification: "SECRET",
-                    fromUser: "Alice",
-                    toUser: "Bob",
-                    subject: "Security Review",
-                    summary: "Summary goes here.",
-                    callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
-                    sections: [
-                        { title: "Background", text: "Background info" },
-                        { title: "Analysis", text: "Analysis info" }
-                    ]
+
+            try {
+
+                const formData = new FormData();
+                formData.append(
+                    "payload",
+                    JSON.stringify(payload)
+                );
+
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    body: formData
                 });
-            
-                if (result.success) {
-                    console.log("LINK:", result.link);
-                } else {
-                    console.error("ERROR:", result.error);
+
+                const data = await res.json();
+
+                if (!data.success) {
+                    return {
+                        success: false,
+                        error: data.error
+                    };
                 }
+
+                return {
+                    success: true,
+                    link: data.LINK
+                };
+
+            } catch (err) {
+
+                return {
+                    success: false,
+                    error: err.message
+                };
             }
-            
-            main();
-        </script>
-    </body>
+        }
+
+        async function main() {
+
+            const status = document.getElementById("status");
+
+            status.innerText = "Generating...";
+
+            const result = await generateMemo({
+                classification: "SECRET",
+                fromUser: "Alice",
+                toUser: "Bob",
+                subject: "Security Review",
+                summary: "This is a generated memo.",
+                callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
+                sections: [
+                    {
+                        title: "Background",
+                        text: "Background information here."
+                    },
+                    {
+                        title: "Analysis",
+                        text: "Analysis information here."
+                    }
+                ]
+            });
+
+            if (result.success) {
+
+                status.innerHTML =
+                    "Done: " +
+                    `<a href="${result.link}" target="_blank">Open Document</a>`;
+
+            } else {
+
+                status.innerText =
+                    "Error: " + result.error;
+            }
+        }
+
+    </script>
+
+</body>
 </html>
