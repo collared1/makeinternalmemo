@@ -1,61 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Memo Generator</title>
-</head>
-<body>
-
-<button onclick="generate()">Generate Test Document</button>
-<p id="status"></p>
-<a id="result" href="#" target="_blank" style="display:none"></a>
-
-<script>
-  const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
-
-  function buildPayload() {
-    return {
-      CLASSIFICATION: "UNCLASSIFIED",
-      FROMUSER:  "Cmdr. Jane Holloway",
-      TOUSER:    "Director Samuel Reeves",
-      SUBJECT:   "Quarterly Intelligence Summary — Q2 2026",
-      SUMMARY:   "This memorandum provides a high-level summary of intelligence activities and notable developments for Q2 2026.",
-      H1TITLE:   "Operational Overview",
-      H1TEXT:    "All field operations proceeded within established parameters. No critical incidents were recorded.",
-      H2TITLE:   "Threat Assessment",
-      H2TEXT:    "Current threat level remains elevated in sectors 4 through 7. Recommend continued surveillance.",
-      H3TITLE:   "Personnel Updates",
-      H3TEXT:    "Three new analysts joined the team this quarter. Onboarding completed successfully.",
-    };
-  }
-
-  async function generate() {
-    const status = document.getElementById("status");
-    const result = document.getElementById("result");
-
-    status.textContent = "Generating…";
-    result.style.display = "none";
-
-    try {
-      const res  = await fetch(WORKER_URL, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(buildPayload()),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        status.textContent = "Done!";
-        result.href = data.url;
-        result.textContent = data.url;
-        result.style.display = "inline";
-      } else {
-        status.textContent = "Error: " + (data.error || "Unknown error");
+  <head>
+    <meta charset="UTF-8" />
+    <title>Memo Generator</title>
+    <style>
+      
+    </style>
+  </head>
+  <body>
+    
+    <button onclick="generate()">Generate Memo</button>
+    <p id="status"></p>
+    <a id="result" href="#" target="_blank" style="display:none"></a>
+    
+    <script>
+      const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
+    
+      function buildPayload() {
+        return {
+          CLASSIFICATION: "CONFIDENTIAL",
+          FROMUSER:  "Princip. DD-DSS, Julius Caesar",
+          TOUSER:    "Secretary of State, Mike Johnson",
+          SUBJECT:   "Testing memo creation system.",
+          SUMMARY:   "This memorandum is a test of the new memorandum creation system developed by me.",
+        };
       }
-    } catch (err) {
-      status.textContent = "Network error: " + err.message;
-    }
-  }
-</script>
-</body>
+    
+      async function generate() {
+        const status = document.getElementById("status");
+        const result = document.getElementById("result");
+    
+        status.textContent = "Generating…";
+        result.style.display = "none";
+    
+        try {
+          const res  = await fetch(WORKER_URL, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(buildPayload()),
+          });
+          const data = await res.json();
+    
+          if (data.success) {
+            result.href = data.url;
+            result.textContent = "Make a copy of this document:" + data.url;
+          } else {
+            status.textContent = "Please contact the programmer, c0llared_, as an unexpected error has come up. Paste this: Error: " + (data.error || "Unknown error");
+          }
+        } catch (err) {
+          status.textContent = "Network error: " + err.message;
+        }
+      }
+    </script>
+  </body>
 </html>
