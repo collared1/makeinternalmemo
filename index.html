@@ -53,11 +53,14 @@ async function generateMemo({
         const formData = new FormData();
         formData.append("payload", JSON.stringify(payload));
 
-        // IMPORTANT: request goes ONLY to worker (no CORS issues)
+        console.log("SENDING TO WORKER");
+
         await fetch(WORKER_URL, {
             method: "POST",
             body: formData
         });
+        
+        console.log("SENT");
 
         return {
             success: true
