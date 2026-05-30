@@ -11,6 +11,11 @@
         background-color: #333333;
         color: white;
         font-family: "Roboto Mono", monospace;
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        flex-direction: column;
       }
       a {
         color: white;
@@ -22,41 +27,30 @@
     <button onclick="generate()">Generate Memo</button>
     <p id="status"></p>
     <a id="result" href="#" target="_blank"></a>
-    <textarea id="FROMUSER">Who is sending this memo?</textarea>
-    <textarea id="TOUSER">Who is receiving this memo?</textarea>
-    <textarea id="SUBJECT">What is the subject of this memo?</textarea>
-    <textarea id="SUMMARY">Give a brief summary of this memo's content.</textarea>
-
-    <textarea id="H1TITLE">(OPTIONAL) Give a title for section 1.</textarea>
-    <textarea id="H1TEXT">(OPTIONAL) Give the text content for section 1.</textarea>
-    
-    <textarea id="H2TITLE">(OPTIONAL) Give a title for section 2.</textarea>
-    <textarea id="H2TEXT">(OPTIONAL) Give the text content for section 2.</textarea>
-    
-    <textarea id="H3TITLE">(OPTIONAL) Give a title for section 3.</textarea>
-    <textarea id="H3TEXT">(OPTIONAL) Give the text content for section 3.</textarea>
-    
-    <textarea id="H4TITLE">(OPTIONAL) Give a title for section 4.</textarea>
-    <textarea id="H4TEXT">(OPTIONAL) Give the text content for section 4.</textarea>
-    
-    <textarea id="H5TITLE">(OPTIONAL) Give a title for section 5.</textarea>
-    <textarea id="H5TEXT">(OPTIONAL) Give the text content for section 5.</textarea>
-    
-    <textarea id="H6TITLE">(OPTIONAL) Give a title for section 6.</textarea>
-    <textarea id="H6TEXT">(OPTIONAL) Give the text content for section 6.</textarea>
-    
-    <textarea id="H7TITLE">(OPTIONAL) Give a title for section 7.</textarea>
-    <textarea id="H7TEXT">(OPTIONAL) Give the text content for section 7.</textarea>
-    
-    <textarea id="H8TITLE">(OPTIONAL) Give a title for section 8.</textarea>
-    <textarea id="H8TEXT">(OPTIONAL) Give the text content for section 8.</textarea>
-    
-    <textarea id="H9TITLE">(OPTIONAL) Give a title for section 9.</textarea>
-    <textarea id="H9TEXT">(OPTIONAL) Give the text content for section 9.</textarea>
-    
-    <textarea id="H10TITLE">(OPTIONAL) Give a title for section 10.</textarea>
-    <textarea id="H10TEXT">(OPTIONAL) Give the text content for section 10.</textarea>
-    
+    <textarea id="FROMUSER" placeholder="Who is sending this memo?"></textarea>
+    <textarea id="TOUSER" placeholder="Who is receiving this memo?"></textarea>
+    <textarea id="SUBJECT" placeholder="What is the subject of this memo?"></textarea>
+    <textarea id="SUMMARY" placeholder="Give a brief summary of this memo's content."></textarea>
+    <textarea id="H1TITLE" placeholder="(OPTIONAL) Give a title for section 1."></textarea>
+    <textarea id="H1TEXT" placeholder="(OPTIONAL) Give the text content for section 1."></textarea>
+    <textarea id="H2TITLE" placeholder="(OPTIONAL) Give a title for section 2."></textarea>
+    <textarea id="H2TEXT" placeholder="(OPTIONAL) Give the text content for section 2."></textarea>
+    <textarea id="H3TITLE" placeholder="(OPTIONAL) Give a title for section 3."></textarea>
+    <textarea id="H3TEXT" placeholder="(OPTIONAL) Give the text content for section 3."></textarea>
+    <textarea id="H4TITLE" placeholder="(OPTIONAL) Give a title for section 4."></textarea>
+    <textarea id="H4TEXT" placeholder="(OPTIONAL) Give the text content for section 4."></textarea>
+    <textarea id="H5TITLE" placeholder="(OPTIONAL) Give a title for section 5."></textarea>
+    <textarea id="H5TEXT" placeholder="(OPTIONAL) Give the text content for section 5."></textarea>
+    <textarea id="H6TITLE" placeholder="(OPTIONAL) Give a title for section 6."></textarea>
+    <textarea id="H6TEXT" placeholder="(OPTIONAL) Give the text content for section 6."></textarea>
+    <textarea id="H7TITLE" placeholder="(OPTIONAL) Give a title for section 7."></textarea>
+    <textarea id="H7TEXT" placeholder="(OPTIONAL) Give the text content for section 7."></textarea>
+    <textarea id="H8TITLE" placeholder="(OPTIONAL) Give a title for section 8."></textarea>
+    <textarea id="H8TEXT" placeholder="(OPTIONAL) Give the text content for section 8."></textarea>
+    <textarea id="H9TITLE" placeholder="(OPTIONAL) Give a title for section 9."></textarea>
+    <textarea id="H9TEXT" placeholder="(OPTIONAL) Give the text content for section 9."></textarea>
+    <textarea id="H10TITLE" placeholder="(OPTIONAL) Give a title for section 10."></textarea>
+    <textarea id="H10TEXT" placeholder="(OPTIONAL) Give the text content for section 10."></textarea>
     <script>
       const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
     
