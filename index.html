@@ -1,255 +1,110 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document Generator</title>
+<html>
+    <head>
+        <style>
+            
+        </style>
+    </head>
+    <body>
+        <script>
+            const result = await generateMemo({
+                  classification: "SECRET",
+                  fromUser: "Alice",
+                  toUser: "Bob",
+                  subject: "Security Review",
+                  summary: "Summary goes here.",
+                  callbackUrl = "https://github.io/collared1/makeinternalmemo",
+                  sections: [
+                    {
+                      title: "Background",
+                      text: "Background information."
+                    },
+                    {
+                      title: "Analysis",
+                      text: "Analysis information."
+                    }
+                  ]
+                });
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    color: black;
-    margin: 20px;
-}
-
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold;
-}
-
-input,
-select,
-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 4px;
-    margin-top: 4px;
-    color: black;
-}
-
-textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-button {
-    margin-top: 20px;
-    padding: 8px 16px;
-    cursor: pointer;
-}
-
-.section {
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
-}
-
-#result {
-    margin-top: 20px;
-    font-weight: bold;
-}
-</style>
-</head>
-<body>
-
-<h1>Document Generator</h1>
-
-<label>
-Classification
-<select id="classification">
-    <option>UNCLASSIFIED</option>
-    <option>CLASSIFIED</option>
-    <option>SECRET</option>
-    <option>TOP SECRET</option>
-</select>
-</label>
-
-<label>
-From User
-<input id="fromUser" type="text">
-</label>
-
-<label>
-To User
-<input id="toUser" type="text">
-</label>
-
-<label>
-Subject
-<input id="subject" type="text">
-</label>
-
-<label>
-Summary
-<textarea id="summary"></textarea>
-</label>
-
-<label>
-Callback URL (optional)
-<input id="callbackUrl" type="text">
-</label>
-
-<div id="sections"></div>
-
-<button onclick="generateDocument()">
-Generate Document
-</button>
-
-<div id="result"></div>
-
-<script>
-
-// REPLACE WITH YOUR APPS SCRIPT WEB APP URL
-const WEBHOOK_URL =
-"https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
-
-const sectionsContainer =
-document.getElementById("sections");
-
-for (let i = 1; i <= 10; i++) {
-
-    const section =
-    document.createElement("div");
-
-    section.className = "section";
-
-    section.innerHTML = `
-        <h3>Section ${i}</h3>
-
-        <label>
-        H${i}TITLE
-        <input id="H${i}TITLE" type="text">
-        </label>
-
-        <label>
-        H${i}TEXT
-        <textarea id="H${i}TEXT"></textarea>
-        </label>
-    `;
-
-    sectionsContainer.appendChild(section);
-}
-
-async function generateDocument() {
-
-    const payload = {
-        CLASSIFICATION:
-            document.getElementById(
-                "classification"
-            ).value,
-
-        FROMUSER:
-            document.getElementById(
-                "fromUser"
-            ).value,
-
-        TOUSER:
-            document.getElementById(
-                "toUser"
-            ).value,
-
-        SUBJECT:
-            document.getElementById(
-                "subject"
-            ).value,
-
-        SUMMARY:
-            document.getElementById(
-                "summary"
-            ).value
-    };
-
-    const callbackUrl =
-        document.getElementById(
-            "callbackUrl"
-        ).value.trim();
-
-    if (callbackUrl) {
-        payload.CALLBACK_URL =
-            callbackUrl;
-    }
-
-    for (let i = 1; i <= 10; i++) {
-
-        const title =
-            document.getElementById(
-                `H${i}TITLE`
-            ).value.trim();
-
-        const text =
-            document.getElementById(
-                `H${i}TEXT`
-            ).value.trim();
-
-        if (title) {
-            payload[`H${i}TITLE`] =
-                title;
-        }
-
-        if (text) {
-            payload[`H${i}TEXT`] =
-                text;
-        }
-    }
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-    result.textContent =
-        "Generating...";
-
-    try {
-
-        const formData =
-            new FormData();
-
-        formData.append(
-            "payload",
-            JSON.stringify(payload)
-        );
-
-        const response =
-            await fetch(
-                WEBHOOK_URL,
-                {
+            if (result.success) {
+              console.log(result.link);
+            } else {
+              console.error(result.error);
+            }
+            async function generateMemo({
+              classification,
+              fromUser,
+              toUser,
+              subject,
+              summary,
+              callbackUrl = null,
+              sections = []
+            }) {
+            
+              const payload = {
+                CLASSIFICATION: classification,
+                FROMUSER: fromUser,
+                TOUSER: toUser,
+                SUBJECT: subject,
+                SUMMARY: summary
+              };
+            
+              if (callbackUrl) {
+                payload.CALLBACK_URL = callbackUrl;
+              }
+            
+              for (let i = 0; i < sections.length && i < 10; i++) {
+                const section = sections[i];
+            
+                if (section.title) {
+                  payload[`H${i + 1}TITLE`] = section.title;
+                }
+            
+                if (section.text) {
+                  payload[`H${i + 1}TEXT`] = section.text;
+                }
+              }
+            
+              const formData = new FormData();
+            
+              formData.append(
+                "payload",
+                JSON.stringify(payload)
+              );
+            
+              try {
+            
+                const response = await fetch(
+                  "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec",
+                  {
                     method: "POST",
                     body: formData
+                  }
+                );
+            
+                const data = await response.json();
+            
+                if (!data.success) {
+                  return {
+                    success: false,
+                    error: data.error || "Unknown error"
+                  };
                 }
-            );
-
-        const data =
-            await response.json();
-
-        if (data.success) {
-
-            result.innerHTML = `
-                Document created:
-                <a href="${data.LINK}"
-                   target="_blank">
-                   Open Document
-                </a>
-            `;
-
-        } else {
-
-            result.textContent =
-                "Error: " +
-                data.error;
-        }
-
-    } catch (err) {
-
-        result.textContent =
-            "Request failed: " +
-            err.message;
-    }
-}
-</script>
-
-</body>
+            
+                return {
+                  success: true,
+                  link: data.LINK
+                };
+            
+              } catch (err) {
+            
+                return {
+                  success: false,
+                  error: err.message
+                };
+            
+              }
+            }
+            
+        </script>
+    </body>
 </html>
-```
