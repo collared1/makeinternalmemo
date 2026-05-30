@@ -1,79 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Memo Generator</title>
+<meta charset="UTF-8" />
+<title>Memo Generator</title>
 </head>
-
 <body>
 
-<h2>Memo Generator</h2>
-
-<button onclick="main()">Generate Memo</button>
-
+<button onclick="generate()">Generate Test Document</button>
 <p id="status"></p>
+<a id="result" href="#" target="_blank" style="display:none"></a>
 
 <script>
+  const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
 
-const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev";
+  function buildPayload() {
+    return {
+      CLASSIFICATION: "UNCLASSIFIED",
+      FROMUSER:  "Cmdr. Jane Holloway",
+      TOUSER:    "Director Samuel Reeves",
+      SUBJECT:   "Quarterly Intelligence Summary — Q2 2026",
+      SUMMARY:   "This memorandum provides a high-level summary of intelligence activities and notable developments for Q2 2026.",
+      H1TITLE:   "Operational Overview",
+      H1TEXT:    "All field operations proceeded within established parameters. No critical incidents were recorded.",
+      H2TITLE:   "Threat Assessment",
+      H2TEXT:    "Current threat level remains elevated in sectors 4 through 7. Recommend continued surveillance.",
+      H3TITLE:   "Personnel Updates",
+      H3TEXT:    "Three new analysts joined the team this quarter. Onboarding completed successfully.",
+    };
+  }
 
-async function generateMemo(payload) {
+  async function generate() {
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
 
-    console.log("SENDING TO WORKER");
+    status.textContent = "Generating…";
+    result.style.display = "none";
 
     try {
+      const res  = await fetch(WORKER_URL, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(buildPayload()),
+      });
+      const data = await res.json();
 
-        await fetch(WORKER_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        });
-
-        console.log("SENT");
-
-        return { success: true };
-
+      if (data.success) {
+        status.textContent = "Done!";
+        result.href = data.url;
+        result.textContent = data.url;
+        result.style.display = "inline";
+      } else {
+        status.textContent = "Error: " + (data.error || "Unknown error");
+      }
     } catch (err) {
-
-        return {
-            success: false,
-            error: err.message
-        };
+      status.textContent = "Network error: " + err.message;
     }
-}
-
-async function main() {
-
-    const status = document.getElementById("status");
-
-    status.innerText = "Generating memo...";
-
-    const result = await generateMemo({
-        CLASSIFICATION: "SECRET",
-        FROMUSER: "Alice",
-        TOUSER: "Bob",
-        SUBJECT: "Security Review",
-        SUMMARY: "This is a test memo generated through Worker proxy.",
-        CALLBACK_URL: "https://makeinternalmemo.pages.dev/makeinternalmemo",
-        H1TITLE: "Background",
-        H1TEXT: "Background info",
-        H2TITLE: "Analysis",
-        H2TEXT: "Analysis info"
-    });
-
-    if (result.success) {
-
-        status.innerText = "Request sent. Waiting for document link...";
-
-    } else {
-
-        status.innerText = "Error: " + result.error;
-    }
-}
-
+  }
 </script>
-
 </body>
 </html>
