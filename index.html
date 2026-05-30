@@ -7,111 +7,103 @@
 
 <body>
 
-    <h2>Memo Generator</h2>
+<h2>Memo Generator</h2>
 
-    <button onclick="main()">Generate Memo</button>
+<button onclick="main()">Generate Memo</button>
 
-    <p id="status"></p>
+<p id="status"></p>
 
-    <script>
+<script>
 
-        const APPS_SCRIPT_URL =
-            "https://script.google.com/macros/s/AKfycbyyXPSB-6WSvMeOgxW22R1FsX1-Y1kiM3FwLykZ_pp8hOfTneDoLA38_rfHO-c11XWxjQ/exec";
+const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev";
 
-        async function generateMemo({
-            classification,
-            fromUser,
-            toUser,
-            subject,
-            summary,
-            callbackUrl = null,
-            sections = []
-        }) {
+async function generateMemo({
+    classification,
+    fromUser,
+    toUser,
+    subject,
+    summary,
+    callbackUrl = null,
+    sections = []
+}) {
 
-            const payload = {
-                CLASSIFICATION: classification,
-                FROMUSER: fromUser,
-                TOUSER: toUser,
-                SUBJECT: subject,
-                SUMMARY: summary
-            };
+    const payload = {
+        CLASSIFICATION: classification,
+        FROMUSER: fromUser,
+        TOUSER: toUser,
+        SUBJECT: subject,
+        SUMMARY: summary
+    };
 
-            if (callbackUrl) {
-                payload.CALLBACK_URL = callbackUrl;
-            }
+    if (callbackUrl) {
+        payload.CALLBACK_URL = callbackUrl;
+    }
 
-            for (let i = 0; i < sections.length && i < 10; i++) {
-                if (sections[i].title) {
-                    payload[`H${i + 1}TITLE`] = sections[i].title;
-                }
-                if (sections[i].text) {
-                    payload[`H${i + 1}TEXT`] = sections[i].text;
-                }
-            }
-
-            const formData = new FormData();
-            formData.append("payload", JSON.stringify(payload));
-
-            try {
-
-                await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    body: formData
-                });
-
-                // We DO NOT read response because Apps Script + CORS blocks it
-
-                return {
-                    success: true
-                };
-
-            } catch (err) {
-
-                return {
-                    success: false,
-                    error: err.message
-                };
-            }
+    for (let i = 0; i < sections.length && i < 10; i++) {
+        if (sections[i].title) {
+            payload[`H${i + 1}TITLE`] = sections[i].title;
         }
-
-        async function main() {
-
-            const status = document.getElementById("status");
-
-            status.innerText = "Generating memo...";
-
-            const result = await generateMemo({
-                classification: "SECRET",
-                fromUser: "Alice",
-                toUser: "Bob",
-                subject: "Security Review",
-                summary: "This is a test memo.",
-                callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
-                sections: [
-                    {
-                        title: "Background",
-                        text: "Background info"
-                    },
-                    {
-                        title: "Analysis",
-                        text: "Analysis info"
-                    }
-                ]
-            });
-
-            if (result.success) {
-
-                status.innerText =
-                    "Request sent. Waiting for document link...";
-
-            } else {
-
-                status.innerText =
-                    "Error: " + result.error;
-            }
+        if (sections[i].text) {
+            payload[`H${i + 1}TEXT`] = sections[i].text;
         }
+    }
 
-    </script>
+    try {
+
+        const formData = new FormData();
+        formData.append("payload", JSON.stringify(payload));
+
+        // IMPORTANT: request goes ONLY to worker (no CORS issues)
+        await fetch(WORKER_URL, {
+            method: "POST",
+            body: formData
+        });
+
+        return {
+            success: true
+        };
+
+    } catch (err) {
+        return {
+            success: false,
+            error: err.message
+        };
+    }
+}
+
+async function main() {
+
+    const status = document.getElementById("status");
+
+    status.innerText = "Generating memo...";
+
+    const result = await generateMemo({
+        classification: "SECRET",
+        fromUser: "Alice",
+        toUser: "Bob",
+        subject: "Security Review",
+        summary: "This is a test memo generated via Worker proxy.",
+        callbackUrl: "https://makeinternalmemo.pages.dev/makeinternalmemo",
+        sections: [
+            {
+                title: "Background",
+                text: "Background information"
+            },
+            {
+                title: "Analysis",
+                text: "Analysis information"
+            }
+        ]
+    });
+
+    if (result.success) {
+        status.innerText = "Request sent. Waiting for document link...";
+    } else {
+        status.innerText = "Error: " + result.error;
+    }
+}
+
+</script>
 
 </body>
 </html>
