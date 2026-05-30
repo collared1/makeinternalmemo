@@ -99,7 +99,7 @@
             "SUMMARY":documentElements.summary.value,
           };
           for (const [key, value] of Object.entries(headerElements)) {
-            payload[key] = value;
+            payload[key] = value.value;
           }
           payload = JSON.stringify(payload);
           status.textContent = "Generating… May take a while.";
