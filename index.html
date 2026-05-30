@@ -18,7 +18,7 @@
     
     <button onclick="generate()">Generate Memo</button>
     <p id="status"></p>
-    <a id="result" href="#" target="_blank" style="display:none"></a>
+    <a id="result" href="#" target="_blank"></a>
     
     <script>
       const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
@@ -38,7 +38,6 @@
         const result = document.getElementById("result");
     
         status.textContent = "Generating… May take a while.";
-        result.style.display = "none";
     
         try {
           const res  = await fetch(WORKER_URL, {
@@ -50,7 +49,8 @@
     
           if (data.success) {
             result.href = data.url;
-            result.textContent = "Make a copy of this document:" + data.url;
+            result.textContent = data.url;
+            status.textContent = "Make a copy of this document:"
           } else {
             status.textContent = "Please contact the programmer, c0llared_, as an unexpected error has come up. Paste this: Error: " + (data.error || "Unknown error");
           }
