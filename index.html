@@ -101,7 +101,7 @@
           for (const [key, value] of Object.entries(headerElements)) {
             payload[key] = value;
           }
-          const payload = JSON.stringify(payload);
+          payload = JSON.stringify(payload);
           status.textContent = "Generating… May take a while.";
           const res  = await fetch(WORKER_URL, {
             method:  "POST",
