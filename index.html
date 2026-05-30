@@ -72,21 +72,34 @@
         const status = document.getElementById("status");
         const result = document.getElementById("result");
     
-        status.textContent = "Generating… May take a while.";
     
         try {
           const documentElements = {};
           documentElements.fromuser = await document.getElementById("FROMUSER");
           documentElements.touser = await document.getElementById("TOUSER");
-          const subject = await document.getElementById("SUBJECT");
-          const summary = await document.getElementById("SUMMARY");
+          documentElements.subject = await document.getElementById("SUBJECT");
+          documentElements.summary = await document.getElementById("SUMMARY");
+          const headerElements = {}
 
-          const h1title = await document.getElementById("H1TITLE");
-          const h1text = await document.getElementById("H1TEXT");
+          for (let i = 1; i <= 10; i++) {
+            headerElements[`h${i}title`] = await document.getElementById(`H${i}TITLE`);
+            headerElements[`h${i}text`] = await document.getElementById(`H${i}TEXT`);
+          }
+          for (const value of Object.values(documentElements) {
+            if (value.value == "") {
+              window.alert("All non-optional text areas must be filled in to generate a memo.")
+              return
+            }
+          }
+          const payload = JSON.stringify({
+            "CLASSIFICATION":"CONFIDENTIAL",
+            "FROMUSER":documentElements.fromuser.value,
+          })
+          status.textContent = "Generating… May take a while.";
           const res  = await fetch(WORKER_URL, {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify(buildPayload()),
+            body:    payload,
           });
           const data = await res.json();
     
