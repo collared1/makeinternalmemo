@@ -36,6 +36,7 @@
         border: 1px solid white;
         color: white;
         font-family: "Roboto Mono", monospace;
+        margin: 3px;
       }
       .classification_buttons {
         display: flex;
@@ -45,6 +46,7 @@
       .classification_buttons button {
         width: 25%;
         height: 50px;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -52,10 +54,10 @@
     
     <button onclick="generate()">Generate Memo</button>
     <div class="classification_buttons">
-      <button>Unclassified</button>
-      <button>Confidential</button>
-      <button>Secret</button>
-      <button>Top Secret</button>
+      <button id="UNCLASSIFIED">Unclassified</button>
+      <button id="CONFIDENTIAL">Confidential</button>
+      <button id="SECRET">Secret</button>
+      <button id="TOP SECRET">Top Secret</button>
     </div>
     <p id="status"></p>
     <a id="result" href="#" target="_blank"></a>
