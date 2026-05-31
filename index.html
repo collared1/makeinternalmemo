@@ -61,6 +61,7 @@
     <div class="output">
       <p id="status" style="display: none;"></p>
       <a id="result" href="#" target="_blank" style="display: none;"></a>
+      <p id="currentClassification">Current Classification: UNCLASSIFIED</p>
     </div>
     <button onclick="generate()">Generate Memo</button>
     <div class="classification_buttons">
@@ -96,6 +97,19 @@
     <textarea id="H10TEXT" placeholder="(OPTIONAL) Give the text content for section 10."></textarea>
     <script>
       const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
+
+      let currentClassification = "UNCLASSIFIED"
+
+      const classificationButtons = document.querySelectorAll(".classification_button button");
+
+      classificationButtons.addEventListener("mousedown", handleClassificationButtonPress);
+
+      function handleClassificationButtonPress(event) {
+        button = event.target;
+        currentClassification = button.id;
+        currentClassificationNotifier = document.getElementById("currentClassification");
+        currentClassificationNotifier.innerHTML = "Current Classification: " + currentClassificaton;
+      }
     
       async function generate() {
         const status = document.getElementById("status");
@@ -125,7 +139,7 @@
           }
           let payload = {
             "PASSWORD":documentElements.password.value,
-            "CLASSIFICATION":"UNCLASSIFIED",
+            "CLASSIFICATION":currentClassification,
             "FROMUSER":documentElements.fromuser.value,
             "TOUSER":documentElements.touser.value,
             "SUBJECT":documentElements.subject.value,
