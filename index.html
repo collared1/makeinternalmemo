@@ -61,6 +61,7 @@
     </div>
     <p id="status"></p>
     <a id="result" href="#" target="_blank"></a>
+    <textarea id="PASSWORD" placeholder="Enter the password given to you by Collared."></textarea>
     <textarea id="FROMUSER" placeholder="Who is sending this memo?"></textarea>
     <textarea id="TOUSER" placeholder="Who is receiving this memo?"></textarea>
     <textarea id="SUBJECT" placeholder="What is the subject of this memo?"></textarea>
@@ -99,6 +100,7 @@
           documentElements.touser = await document.getElementById("TOUSER");
           documentElements.subject = await document.getElementById("SUBJECT");
           documentElements.summary = await document.getElementById("SUMMARY");
+          documentElements.password = await document.getElementById("PASSWORD");
           const headerElements = {}
 
           for (let i = 1; i <= 10; i++) {
@@ -112,6 +114,7 @@
             }
           }
           let payload = {
+            "PASSWORD":documentElements.password.value,
             "CLASSIFICATION":"UNCLASSIFIED",
             "FROMUSER":documentElements.fromuser.value,
             "TOUSER":documentElements.touser.value,
@@ -122,7 +125,7 @@
             payload[key] = value.value;
           }
           payload = JSON.stringify(payload);
-          status.textContent = "Generating… May take a while.";
+          status.textContent = "Generating. May take up to a minute...";
           const res  = await fetch(WORKER_URL, {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
@@ -135,7 +138,7 @@
             result.textContent = data.url;
             status.textContent = "Make a copy of this document:"
           } else {
-            status.textContent = "Please contact the programmer, c0llared_, as an unexpected error has come up. Paste this: Error: " + (data.error || "Unknown error");
+            status.textContent = "Error: " + (data.error || "Unknown error");
           }
         } catch (err) {
           status.textContent = "Network error: " + err.message;
