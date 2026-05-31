@@ -37,11 +37,21 @@
         color: white;
         font-family: "Roboto Mono", monospace;
       }
+      .classification_buttons {
+        display: flex;
+        flex-direction: row;
+      }
     </style>
   </head>
   <body>
     
     <button onclick="generate()">Generate Memo</button>
+    <div class="classification_buttons">
+      <button></button>
+      <button></button>
+      <button></button>
+      <button></button>
+    </div>
     <p id="status"></p>
     <a id="result" href="#" target="_blank"></a>
     <textarea id="FROMUSER" placeholder="Who is sending this memo?"></textarea>
