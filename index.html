@@ -103,10 +103,12 @@
       const classificationButtons = document.querySelectorAll(".classification_button button");
 
       for(const classificationButton of classificationButtons) {
+        console.log("ADDED EVENT LISTENER TO CLASSIFICATIONBUTTON");
         classificationButton.addEventListener("mousedown", handleClassificationButtonPress);
       }
 
       function handleClassificationButtonPress(event) {
+        console.log("HANDLING CLASSIFICATION BUTTON PRESS")
         button = event.target;
         currentClassification = button.id;
         currentClassificationNotifier = document.getElementById("currentClassification");
