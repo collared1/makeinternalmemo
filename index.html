@@ -102,7 +102,9 @@
 
       const classificationButtons = document.querySelectorAll(".classification_button button");
 
-      classificationButtons.addEventListener("mousedown", handleClassificationButtonPress);
+      for(const classificationButton of classificationButtons) {
+        classificationButton.addEventListener("mousedown", handleClassificationButtonPress);
+      }
 
       function handleClassificationButtonPress(event) {
         button = event.target;
