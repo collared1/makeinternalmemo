@@ -117,7 +117,7 @@
           }
           for (const value of Object.values(documentElements)) {
             if (value.value == "") {
-              window.alert("All non-optional text areas must be filled in to generate a memo.");
+              status.innerHTML = "All non-optional text areas must be filled in to generate a memo.";
               return;
             }
           }
