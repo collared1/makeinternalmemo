@@ -98,7 +98,7 @@
     <script>
       const WORKER_URL = "https://memo-proxy.solarisgd1000.workers.dev/";
 
-      var currentClassification = "UNCLASSIFIED";
+      let currentClassification = "UNCLASSIFIED";
 
       const classificationButtons = document.querySelectorAll(".classification_buttons button");
 
@@ -114,7 +114,7 @@
         button = event.target;
         currentClassification = button.id;
         currentClassificationNotifier = document.getElementById("currentClassification");
-        currentClassificationNotifier.innerHTML = "Current Classification: " + currentClassificaton;
+        currentClassificationNotifier.innerHTML = "Current Classification: " + currentClassification;
       }
     
       async function generate() {
