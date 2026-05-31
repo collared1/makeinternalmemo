@@ -102,6 +102,8 @@
 
       const classificationButtons = document.querySelectorAll(".classification_button button");
 
+      console.log(classificationButtons)
+
       for(const classificationButton of classificationButtons) {
         console.log("ADDED EVENT LISTENER TO CLASSIFICATIONBUTTON");
         classificationButton.addEventListener("mousedown", handleClassificationButtonPress);
