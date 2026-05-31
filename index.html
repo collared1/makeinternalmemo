@@ -59,8 +59,8 @@
   </head>
   <body>
     <div class="output">
-      <p id="status"></p>
-      <a id="result" href="#" target="_blank"></a>
+      <p id="status" style="display: none;"></p>
+      <a id="result" href="#" target="_blank" style="display: none;"></a>
     </div>
     <button onclick="generate()">Generate Memo</button>
     <div class="classification_buttons">
@@ -118,6 +118,7 @@
           }
           for (const value of Object.values(documentElements)) {
             if (value.value == "") {
+              status.style.display = "inline";
               status.innerHTML = "All non-optional text areas must be filled in to generate a memo.";
               return;
             }
@@ -134,6 +135,7 @@
             payload[key] = value.value;
           }
           payload = JSON.stringify(payload);
+          status.style.display = "inline";
           status.textContent = "Generating. May take up to a minute...";
           const res  = await fetch(WORKER_URL, {
             method:  "POST",
@@ -143,6 +145,7 @@
           const data = await res.json();
     
           if (data.success) {
+            result.style.display = "inline"
             result.href = data.url;
             result.textContent = data.url;
             status.textContent = "Make a copy of this document:"
