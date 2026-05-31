@@ -48,10 +48,19 @@
         height: 50px;
         cursor: pointer;
       }
+      .output {
+        background-color: black;
+        border: 1px solid white;
+        height: 100px;
+        padding: 5px;
+      }
     </style>
   </head>
   <body>
-    
+    <div class="output">
+      <p id="status"></p>
+      <a id="result" href="#" target="_blank"></a>
+    </div>
     <button onclick="generate()">Generate Memo</button>
     <div class="classification_buttons">
       <button id="UNCLASSIFIED">Unclassified</button>
@@ -59,8 +68,6 @@
       <button id="SECRET">Secret</button>
       <button id="TOP SECRET">Top Secret</button>
     </div>
-    <p id="status"></p>
-    <a id="result" href="#" target="_blank"></a>
     <textarea id="PASSWORD" placeholder="Enter the password given to you by Collared."></textarea>
     <textarea id="FROMUSER" placeholder="Who is sending this memo?"></textarea>
     <textarea id="TOUSER" placeholder="Who is receiving this memo?"></textarea>
@@ -95,6 +102,7 @@
     
     
         try {
+          result.innerHTML = "";
           const documentElements = {};
           documentElements.fromuser = await document.getElementById("FROMUSER");
           documentElements.touser = await document.getElementById("TOUSER");
